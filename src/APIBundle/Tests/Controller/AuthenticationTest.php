@@ -10,9 +10,17 @@ namespace AppBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Class AuthenticationTest
+ * @package AppBundle\Tests\Controller
+ */
 class AuthenticationTest extends WebTestCase
 {
-    public function testAuthenticate(){
+    /**
+     * Tests the authentication
+     */
+    public function testAuthenticate()
+    {
         $client = static::createClient();
         $client->request('GET', '/');
         $this->assertEquals(403, $client->getResponse()->getStatusCode());
