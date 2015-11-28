@@ -6,6 +6,9 @@ security:
     providers:
         in_memory:
             memory: ~
+        api_user_provider:
+            id: api_user_provider
+
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -18,3 +21,4 @@ security:
            stateless: true
            simple_preauth:
                authenticator: apikey_authenticator
+           provider: api_user_provider

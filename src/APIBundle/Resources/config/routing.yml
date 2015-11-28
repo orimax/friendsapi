@@ -1,3 +1,7 @@
 api_homepage:
     path:     /
     defaults: { _controller: APIBundle:Default:index }
+
+api_friends:
+    path:     /friends
+    defaults: { _controller: APIBundle:Friends:index }

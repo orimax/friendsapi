@@ -2,3 +2,6 @@ services:
     apikey_authenticator:
           class:  APIBundle\Security\ApiKeyAuthenticator
           public: false
+    api_user_provider:
+          class: APIBundle\Security\APIUserProvider
+          arguments: ["@doctrine_mongodb"]

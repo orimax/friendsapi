@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
  */
 class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
+
     /**
      * @param Request $request
      * @param string  $providerKey
@@ -37,6 +38,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             throw new BadCredentialsException('No API key found.');
         }
 
+
         return new PreAuthenticatedToken(
             'anon.',
             $apiKey,
@@ -48,19 +50,43 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      * @param TokenInterface        $token
      * @param UserProviderInterface $userProvider
      * @param string                $providerKey
+     * @return PreAuthenticatedToken
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-        // TODO: Implement authenticateToken() method.
+        if (!$userProvider instanceof APIUserProvider) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The user provider must be an instance of ApiKeyUserProvider (%s was given).',
+                    get_class($userProvider)
+                )
+            );
+        }
+
+        $apiKey = $token->getCredentials();
+        $user = $userProvider->loadUserByAPIKey($apiKey);
+
+        if (!$user) {
+            throw new BadCredentialsException('The user with specified API key doesn\'t exist.');
+        }
+
+        return new PreAuthenticatedToken(
+            $user,
+            $apiKey,
+            $providerKey,
+            []
+        );
+
     }
 
     /**
      * @param TokenInterface $token
      * @param string         $providerKey
+     * @return bool
      */
     public function supportsToken(TokenInterface $token, $providerKey)
     {
-        // TODO: Implement supportsToken() method.
+        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
     }
 
     /**
@@ -70,6 +96,6 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        return new Response("Authentication Failed.", 403);
+        return new Response($exception->getMessage(), 403);
     }
 }
