@@ -8,13 +8,14 @@
 
 namespace APIBundle\Security;
 
+use APIBundle\Exception\APIKeyNotSpecifiedException;
+use APIBundle\Exception\UserDoesNotExistException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 
@@ -35,7 +36,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         $apiKey = $request->query->get('apikey');
 
         if (!$apiKey) {
-            throw new BadCredentialsException('No API key found.');
+            throw new APIKeyNotSpecifiedException();
         }
 
 
@@ -51,6 +52,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      * @param UserProviderInterface $userProvider
      * @param string                $providerKey
      * @return PreAuthenticatedToken
+     * @throws UserDoesNotExistException
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
@@ -67,7 +69,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         $user = $userProvider->loadUserByAPIKey($apiKey);
 
         if (!$user) {
-            throw new BadCredentialsException('The user with specified API key doesn\'t exist.');
+            throw new UserDoesNotExistException();
         }
 
         return new PreAuthenticatedToken(

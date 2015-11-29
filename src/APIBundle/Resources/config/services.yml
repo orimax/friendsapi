@@ -5,3 +5,7 @@ services:
     api_user_provider:
           class: APIBundle\Security\APIUserProvider
           arguments: ["@doctrine_mongodb"]
+    kernel.listener.api_exception_listener:
+            class: APIBundle\EventListener\APIExceptionListener
+            tags:
+                - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }

@@ -88,3 +88,7 @@ doctrine_mongodb:
     document_managers:
         default:
             auto_mapping: true
+
+fos_rest:
+    routing_loader:
+        default_format: json

@@ -3,5 +3,5 @@ api_homepage:
     defaults: { _controller: APIBundle:Default:index }
 
 api_friends:
-    path:     /friends
-    defaults: { _controller: APIBundle:Friends:index }
+    type: rest
+    resource: APIBundle\Controller\FriendsController

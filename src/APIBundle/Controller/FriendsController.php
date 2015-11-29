@@ -8,7 +8,7 @@
 
 namespace APIBundle\Controller;
 
-use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use APIBundle\Response\APIResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ class FriendsController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function getFriendsAction(Request $request)
     {
         $apiKey = $request->query->get('apikey');
         $mongo = $this->container->get('doctrine_mongodb');
@@ -31,6 +31,6 @@ class FriendsController extends Controller
             ->getRepository('APIBundle:User')
             ->getFriends($apiKey);
 
-        return new Response(json_encode($friends));
+        return new APIResponse($friends);
     }
 }
