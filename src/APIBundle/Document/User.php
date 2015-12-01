@@ -9,15 +9,15 @@
 namespace APIBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Symfony\Component\Security\Core\Role\Role;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use MongoId;
 
 /**
  * @MongoDB\Document(repositoryClass="APIBundle\Repository\UserRepository")
  */
 class User
 {
+
     /**
      * @MongoDB\Id
      */
@@ -34,9 +34,19 @@ class User
     protected $friends;
 
     /**
+     * @MongoDB\String
+     */
+    protected $apikey;
+
+    /**
+     * @MongoDB\Collection
+     */
+    protected $friendshipRequests;
+
+    /**
      * Get id
      *
-     * @return id $id
+     * @return MongoId $id
      */
     public function getId()
     {
@@ -44,10 +54,21 @@ class User
     }
 
     /**
+     * @param mixed $id
+     * @return self $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * Set name
      *
      * @param string $name
-     * @return self
+     * @return self $this
      */
     public function setName($name)
     {
@@ -69,8 +90,8 @@ class User
     /**
      * Set friends
      *
-     * @param collection $friends
-     * @return self
+     * @param array $friends
+     * @return self $this
      */
     public function setFriends($friends)
     {
@@ -82,12 +103,52 @@ class User
     /**
      * Get friends
      *
-     * @return collection $friends
+     * @return array $friends
      */
     public function getFriends()
     {
         return $this->friends;
     }
+
+    /**
+     * @return array
+     */
+    public function getFriendshipRequests()
+    {
+        return (array) $this->friendshipRequests;
+    }
+
+    /**
+     * @param array $friendshipRequests
+     * @return self $this
+     */
+    public function setFriendshipRequests($friendshipRequests)
+    {
+        $this->friendshipRequests = $friendshipRequests;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApikey()
+    {
+        return $this->apikey;
+    }
+
+    /**
+     * @param mixed $apikey
+     * @return self $this
+     */
+    public function setApikey($apikey)
+    {
+        $this->apikey = $apikey;
+
+        return $this;
+    }
+
+
 
     /**
      * The function needed to pass the User object to PreAuthenticatedToken object

@@ -25,7 +25,7 @@ class APIException extends HttpException
      * @param null            $message
      * @param \Exception|null $previous
      * @param array           $headers
-     * @param array           $code
+     * @param integer         $code
      */
     public function __construct(
         $statusCode = null,
@@ -43,5 +43,4 @@ class APIException extends HttpException
         $statusCode = $statusCode ?: $this->statusCode;
         parent::__construct($statusCode, $message, $previous, $headers, $code);
     }
-
 }

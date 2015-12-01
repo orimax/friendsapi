@@ -8,7 +8,6 @@
 
 namespace APIBundle\Response;
 
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -19,15 +18,16 @@ class APIResponse extends JsonResponse
 {
     /**
      * APIResponse constructor.
-     * @param array $responseArray
+     * @param mixed|null $responseArray
+     * @param int        $status
      */
-    public function __construct($responseArray)
+    public function __construct($responseArray, $status = 200)
     {
         $response = [
             "status" => "success",
             "data" => $responseArray,
         ];
 
-        parent::__construct($response);
+        parent::__construct($response, $status);
     }
 }

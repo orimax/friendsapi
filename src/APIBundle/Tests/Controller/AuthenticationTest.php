@@ -26,6 +26,9 @@ class AuthenticationTest extends WebTestCase
         $this->assertEquals(401, $client->getResponse()->getStatusCode());
     }
 
+    /**
+     * Authentication without API key is not allowed: not authorized.
+     */
     public function testAuthenticateFriends()
     {
         $client = static::createClient();
@@ -35,6 +38,9 @@ class AuthenticationTest extends WebTestCase
         $this->assertEquals("failure", $content->status);
     }
 
+    /**
+     * Authentication with an API key of non existent user
+     */
     public function testAuthenticateWrongUser()
     {
         $client = static::createClient();

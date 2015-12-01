@@ -23,14 +23,28 @@ class FriendsController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function getFriendsAction(Request $request)
+    public function getListAction(Request $request)
     {
-        $apiKey = $request->query->get('apikey');
-        $mongo = $this->container->get('doctrine_mongodb');
-        $friends = $mongo
+        $apiKey = $request->headers->get('apikey');
+        $friends = $this->container->get('doctrine_mongodb')
             ->getRepository('APIBundle:User')
             ->getFriends($apiKey);
 
         return new APIResponse($friends);
+    }
+
+    /**
+     * @param Request $request
+     * @return APIResponse
+     */
+    public function postAddfriendsAction(Request $request)
+    {
+        $apiKey = $request->headers->get('apikey');
+        $friendId = $request->request->get('friendId');
+        $this->container->get('doctrine_mongodb')
+            ->getRepository('APIBundle:User')
+            ->addFriend($apiKey, $friendId);
+
+        return new APIResponse([], 201);
     }
 }

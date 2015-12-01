@@ -4,4 +4,5 @@ api_homepage:
 
 api_friends:
     type: rest
+    prefix: /friends
     resource: APIBundle\Controller\FriendsController

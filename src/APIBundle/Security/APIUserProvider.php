@@ -9,7 +9,6 @@
 namespace APIBundle\Security;
 
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
@@ -36,6 +35,13 @@ class APIUserProvider implements UserProviderInterface
         $this->mongodb = $mongodb;
     }
 
+    /**
+     * The method, required by UserProviderInterface, not needed in this application.
+     *
+     * @param string $username
+     * @throws UnsupportedUserException
+     * @return void
+     */
     public function loadUserByUsername($username)
     {
         // this is used for storing authentication in the session
@@ -76,5 +82,4 @@ class APIUserProvider implements UserProviderInterface
 
         return $user;
     }
-
 }
