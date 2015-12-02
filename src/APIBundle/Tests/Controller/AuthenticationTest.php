@@ -32,7 +32,7 @@ class AuthenticationTest extends WebTestCase
     public function testAuthenticateFriends()
     {
         $client = static::createClient();
-        $client->request('GET', '/friends');
+        $client->request('GET', '/friends/list');
         $this->assertEquals(401, $client->getResponse()->getStatusCode());
         $content = json_decode($client->getResponse()->getContent());
         $this->assertEquals("failure", $content->status);

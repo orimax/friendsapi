@@ -108,8 +108,8 @@ class FriendsControllerTest extends WebTestCase
         ], $user['friendshipRequests']);
 
         $this->client->request(
-            'POST',
-            '/friends/addfriends',
+            'PUT',
+            '/friends/addfriend',
             //the user that is not in friendshipRequests must be added to friendshipRequests
             ["friendId" => "565c1f0c21d6c45bcf27c7ee"],
             [],
@@ -147,8 +147,8 @@ class FriendsControllerTest extends WebTestCase
         $this->assertNotContains("565c1f0c21d6c45bcf27c7ee", $friend['friends']);
 
         $this->client->request(
-            'POST',
-            '/friends/addfriends',
+            'PUT',
+            '/friends/addfriend',
             //the user from friendshipRequests must be added to friends
             ["friendId" => "565c1f0c21d6c45bcf27c7ee"],
             [],

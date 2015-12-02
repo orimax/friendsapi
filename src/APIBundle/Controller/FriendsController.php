@@ -37,7 +37,7 @@ class FriendsController extends Controller
      * @param Request $request
      * @return APIResponse
      */
-    public function postAddfriendsAction(Request $request)
+    public function putAddfriendAction(Request $request)
     {
         $apiKey = $request->headers->get('apikey');
         $friendId = $request->request->get('friendId');
