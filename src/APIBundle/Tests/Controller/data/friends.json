@@ -2398,7 +2398,11 @@
       "565c1f0c21d6c45bcf27c7f6",
       "565c1f0c21d6c45bcf27c7d7"
     ],
-    "name": "Edwin Lester Arnold"
+    "name": "Edwin Lester Arnold",
+    "friendshipRequests": [
+        "565c1f0c21d6c45bcf27c7ef",
+        "565c1f0c21d6c45bcf27c80a"
+    ]
   },
   {
     "_id": {

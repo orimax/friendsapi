@@ -8,6 +8,7 @@
 
 namespace APIBundle\Repository;
 
+use APIBundle\Exception\FriendshipRequestDoesNotExistException;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use APIBundle\Document\User;
 
@@ -36,7 +37,34 @@ class UserRepository extends DocumentRepository
         /** @var User[] $friends */
         foreach ($friends as $friend) {
             $friendsList[] = [
-                "id" => $friend->getId(),
+                "id" => (string) $friend->getId(),
+                "name" => $friend->getName(),
+            ];
+        }
+
+        return $friendsList;
+    }
+
+    /**
+     * @param string $apiKey
+     * @return array
+     */
+    public function getFriendshipRequests($apiKey)
+    {
+        $user = $this->findOneBy(["apikey" => $apiKey]);
+
+        $friends = $this->createQueryBuilder()
+            ->field("id")
+            ->in($user->getFriendshipRequests())
+            ->getQuery()
+            ->execute();
+
+        $friendsList = [];
+
+        /** @var User[] $friends */
+        foreach ($friends as $friend) {
+            $friendsList[] = [
+                "id" => (string) $friend->getId(),
                 "name" => $friend->getName(),
             ];
         }
@@ -59,23 +87,7 @@ class UserRepository extends DocumentRepository
         $friend = $this->findOneBy(['_id' => new \MongoId($friendId)]);
 
         if (in_array((string) $user->getId(), $friend->getFriendshipRequests())) {
-            $this->createQueryBuilder()
-                ->update()
-                ->field('_id')->equals(new \MongoId($friendId))
-                ->field('friends')
-                ->push((string) $user->getId())
-                ->field('friendshipRequests')
-                ->pull((string) $user->getId())
-                ->getQuery()
-                ->execute();
-            $this->createQueryBuilder()
-                ->update()
-                ->field('_id')->equals($user->getId())
-                ->field('friends')
-                ->push($friendId)
-                ->getQuery()
-                ->execute();
-
+            $this->addToFriendsList($friendId, (string) $user->getId());
         } else {
             $this->createQueryBuilder()
                 ->update()
@@ -84,5 +96,61 @@ class UserRepository extends DocumentRepository
                 ->getQuery()
                 ->execute();
         }
+    }
+
+    /**
+     * @param string $apiKey
+     * @param string $friendId
+     * @throws FriendshipRequestDoesNotExistException
+     */
+    public function acceptFriendshipRequest($apiKey, $friendId)
+    {
+        /** @var User $user */
+        $user = $this->findOneBy(['apikey' => $apiKey]);
+        if (!in_array($friendId, $user->getFriendshipRequests())) {
+            throw new FriendshipRequestDoesNotExistException();
+        }
+
+        $this->addToFriendsList((string) $user->getId(), $friendId);
+    }
+
+    /**
+     * @param string $apiKey
+     * @param string $userId
+     */
+    public function declineFriendshipRequest($apiKey, $userId)
+    {
+        /** @var User $user */
+        $this->createQueryBuilder()
+            ->update()
+            ->field('apikey')->equals($apiKey)
+            ->field('friendshipRequests')
+            ->pull($userId)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param string $friendId - the users, that owns a friendship request
+     * @param string $userId - the user, who applies to be friends
+     */
+    protected function addToFriendsList($friendId, $userId)
+    {
+        $this->createQueryBuilder()
+            ->update()
+            ->field('_id')->equals(new \MongoId($friendId))
+            ->field('friends')
+            ->push($userId)
+            ->field('friendshipRequests')
+            ->pull($userId)
+            ->getQuery()
+            ->execute();
+        $this->createQueryBuilder()
+            ->update()
+            ->field('_id')->equals($userId)
+            ->field('friends')
+            ->push($friendId)
+            ->getQuery()
+            ->execute();
     }
 }

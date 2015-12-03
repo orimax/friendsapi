@@ -80,7 +80,66 @@ class FriendsControllerTest extends WebTestCase
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(
-            "{\"status\":\"success\",\"data\":[{\"id\":\"565b9adb21d6c45bcf27aa7c\",\"name\":\"David Almond\"},{\"id\":\"565b9adb21d6c45bcf27aaa9\",\"name\":\"Richard Armstrong\"},{\"id\":\"565b9adb21d6c45bcf27aab7\",\"name\":\"Alan Bennett\"},{\"id\":\"565b9adb21d6c45bcf27aac5\",\"name\":\"Phyllis Bentley\"},{\"id\":\"565c111c21d6c45bcf27ab00\",\"name\":\"Mary Hayley Bell\"},{\"id\":\"565c111c21d6c45bcf27ab11\",\"name\":\"Walter Allen\"},{\"id\":\"565c111c21d6c45bcf27ab19\",\"name\":\"David Almond\"},{\"id\":\"565c111c21d6c45bcf27ab36\",\"name\":\"Roy Apps\"},{\"id\":\"565c111c21d6c45bcf27ab5a\",\"name\":\"Peter Benson\"},{\"id\":\"565c111c21d6c45bcf27ab5d\",\"name\":\"George Bentham\"},{\"id\":\"565c111c21d6c45bcf27ab82\",\"name\":\"Thomas Betterton\"},{\"id\":\"565c111c21d6c45bcf27ab85\",\"name\":\"L. S. Bevington\"},{\"id\":\"565c111c21d6c45bcf27ab8e\",\"name\":\"T. J. Binyon\"},{\"id\":\"565c111c21d6c45bcf27ac1a\",\"name\":\"Henry Digby Beste\"},{\"id\":\"565c111c21d6c45bcf27ac8e\",\"name\":\"Alan Bennett\"},{\"id\":\"565c111c21d6c45bcf27ac91\",\"name\":\"Edwin Keppel Bennett\"},{\"id\":\"565c111c21d6c45bcf27ac9b\",\"name\":\"Nicolas Bentley\"},{\"id\":\"565c111c21d6c45bcf27acac\",\"name\":\"The Book of Saint Albans\"},{\"id\":\"565c111c21d6c45bcf27acb7\",\"name\":\"Henry Digby Beste\"},{\"id\":\"565c111c21d6c45bcf27accf\",\"name\":\"Clementina Black\"},{\"id\":\"565c111c21d6c45bcf27acd2\",\"name\":\"John Blackburn\"},{\"id\":\"565c111c21d6c45bcf27acd3\",\"name\":\"Thomas Blackburn\"},{\"id\":\"565c111c21d6c45bcf27acd5\",\"name\":\"R. D. Blackmore\"},{\"id\":\"565c111c21d6c45bcf27acd6\",\"name\":\"Lorna Doone\"},{\"id\":\"565c111c21d6c45bcf27acda\",\"name\":\"Alice Albinia\"},{\"id\":\"565c111c21d6c45bcf27acdb\",\"name\":\"Mary Alcock\"},{\"id\":\"565c111c21d6c45bcf27ace4\",\"name\":\"Cyril Alington\"},{\"id\":\"565c111c21d6c45bcf27ace7\",\"name\":\"James Allen\"},{\"id\":\"565c111c21d6c45bcf27acea\",\"name\":\"Albert Campion\"},{\"id\":\"565c111c21d6c45bcf27aced\",\"name\":\"Kenneth Allsop\"},{\"id\":\"565c111c21d6c45bcf27acf6\",\"name\":\"Elizabeth Amherst\"},{\"id\":\"565c112b21d6c45bcf27b0f0\",\"name\":\"G.\"},{\"id\":\"565c112b21d6c45bcf27b2c7\",\"name\":\"G.\"},{\"id\":\"565c112b21d6c45bcf27b5d8\",\"name\":\"G.\"}]}",
+            "{\"status\":\"success\",\"data\":"
+            . "[{\"id\":\"565b9adb21d6c45bcf27aa7c\",\"name\":\"David Almond\"},"
+            . "{\"id\":\"565b9adb21d6c45bcf27aaa9\",\"name\":\"Richard Armstrong\"},"
+            . "{\"id\":\"565b9adb21d6c45bcf27aab7\",\"name\":\"Alan Bennett\"},"
+            . "{\"id\":\"565b9adb21d6c45bcf27aac5\",\"name\":\"Phyllis Bentley\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab00\",\"name\":\"Mary Hayley Bell\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab11\",\"name\":\"Walter Allen\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab19\",\"name\":\"David Almond\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab36\",\"name\":\"Roy Apps\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab5a\",\"name\":\"Peter Benson\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab5d\",\"name\":\"George Bentham\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab82\",\"name\":\"Thomas Betterton\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab85\",\"name\":\"L. S. Bevington\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ab8e\",\"name\":\"T. J. Binyon\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ac1a\",\"name\":\"Henry Digby Beste\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ac8e\",\"name\":\"Alan Bennett\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ac91\",\"name\":\"Edwin Keppel Bennett\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ac9b\",\"name\":\"Nicolas Bentley\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acac\",\"name\":\"The Book of Saint Albans\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acb7\",\"name\":\"Henry Digby Beste\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27accf\",\"name\":\"Clementina Black\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acd2\",\"name\":\"John Blackburn\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acd3\",\"name\":\"Thomas Blackburn\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acd5\",\"name\":\"R. D. Blackmore\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acd6\",\"name\":\"Lorna Doone\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acda\",\"name\":\"Alice Albinia\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acdb\",\"name\":\"Mary Alcock\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ace4\",\"name\":\"Cyril Alington\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27ace7\",\"name\":\"James Allen\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acea\",\"name\":\"Albert Campion\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27aced\",\"name\":\"Kenneth Allsop\"},"
+            . "{\"id\":\"565c111c21d6c45bcf27acf6\",\"name\":\"Elizabeth Amherst\"},"
+            . "{\"id\":\"565c112b21d6c45bcf27b0f0\",\"name\":\"G.\"},"
+            . "{\"id\":\"565c112b21d6c45bcf27b2c7\",\"name\":\"G.\"},"
+            . "{\"id\":\"565c112b21d6c45bcf27b5d8\",\"name\":\"G.\"}]}",
+            $this->client->getResponse()->getContent()
+        );
+    }
+
+    /**
+     * TEST [GET] /friends/requests
+     */
+    public function testGetFriendshipRequests()
+    {
+
+        $this->client->request(
+            'GET',
+            '/friends/requests',
+            [],
+            [],
+            [
+                "HTTP_apikey" => "f3b006f6cbc86cd1af64ccd1faddeda3",
+            ]
+        );
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            "{\"status\":\"success\",\"data\":"
+            . "[{\"id\":\"565c1f0c21d6c45bcf27c7ef\",\"name\":\"Moniza Alvi\"},"
+            . "{\"id\":\"565c1f0c21d6c45bcf27c80a\",\"name\":\"Arthur John Arberry\"}]}",
             $this->client->getResponse()->getContent()
         );
     }
@@ -182,8 +241,72 @@ class FriendsControllerTest extends WebTestCase
 
         $friendUpdated = $collection->findOne(['_id' => new \MongoId("565c1f0c21d6c45bcf27c827")]);
         $this->assertContains("565c1f0c21d6c45bcf27c7ee", $friendUpdated['friends']);
+    }
 
+    /**
+     * TEST [PUT] /friends/request/accept
+     */
+    public function testAcceptFriendshipRequest()
+    {
+        $collection = $this->getCollection();
+        $user = $collection->findOne(['apikey' => "f3b006f6cbc86cd1af64ccd1faddeda3"]);
+        $this->assertEquals([
+            "565c1f0c21d6c45bcf27c7ef",
+            "565c1f0c21d6c45bcf27c80a",
+        ], $user['friendshipRequests']);
+        $this->assertCount(25, $user['friends']);
+        $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
 
+        $this->client->request(
+            'PUT',
+            '/friends/request/accept',
+            ["friendId" => "565c1f0c21d6c45bcf27c80a"],
+            [],
+            [
+                "HTTP_apikey" => "f3b006f6cbc86cd1af64ccd1faddeda3",
+            ]
+        );
+        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals("{\"status\":\"success\",\"data\":[]}", $this->client->getResponse()->getContent());
+
+        $user = $collection->findOne(['apikey' => "f3b006f6cbc86cd1af64ccd1faddeda3"]);
+        $this->assertEquals([
+            "565c1f0c21d6c45bcf27c7ef",
+        ], $user['friendshipRequests']);
+        $this->assertCount(26, $user['friends']);
+        $this->assertContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
+    }
+
+    /**
+     * TEST [DELETE] /friends/request/decline
+     */
+    public function testDeclineFriendshipRequest()
+    {
+        $collection = $this->getCollection();
+        $user = $collection->findOne(['apikey' => "f3b006f6cbc86cd1af64ccd1faddeda3"]);
+        $this->assertEquals([
+            "565c1f0c21d6c45bcf27c7ef",
+            "565c1f0c21d6c45bcf27c80a",
+        ], $user['friendshipRequests']);
+        $this->assertCount(25, $user['friends']);
+        $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
+        $this->client->request(
+            'DELETE',
+            '/friends/request/decline',
+            ["userId" => "565c1f0c21d6c45bcf27c80a"],
+            [],
+            [
+                "HTTP_apikey" => "f3b006f6cbc86cd1af64ccd1faddeda3",
+            ]
+        );
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals("{\"status\":\"success\",\"data\":[]}", $this->client->getResponse()->getContent());
+        $user = $collection->findOne(['apikey' => "f3b006f6cbc86cd1af64ccd1faddeda3"]);
+        $this->assertEquals([
+            "565c1f0c21d6c45bcf27c7ef",
+        ], $user['friendshipRequests']);
+        $this->assertCount(25, $user['friends']);
+        $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
     }
 
     protected function getCollection()
