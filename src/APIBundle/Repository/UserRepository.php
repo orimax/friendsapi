@@ -37,6 +37,47 @@ class UserRepository extends DocumentRepository
         /** @var User[] $friends */
         foreach ($friends as $friend) {
             $friendsList[] = [
+                "id" => (string)$friend->getId(),
+                "name" => $friend->getName(),
+            ];
+        }
+
+        return $friendsList;
+    }
+
+    public function getFriendsOfFriends($apiKey, $depth)
+    {
+        if ($depth === 0) {
+            return $this->getFriends($apiKey);
+        }
+        $user = $this->findOneBy(["apikey" => $apiKey]);
+        $friendsOfFriends = $user->getFriends();
+        $found = [];
+        for ($i = 0; $i < $depth; $i++) {
+            $toFind = array_diff($friendsOfFriends, $found);
+            $friends = $this->createQueryBuilder()
+                ->field("id")
+                ->in($toFind)
+                ->getQuery()
+                ->execute();
+            $found = array_unique(array_merge($found, $toFind));
+
+            /** @var User[] $friends */
+            foreach ($friends as $friend) {
+                $friendsOfFriends = array_unique(array_merge($friendsOfFriends, $friend->getFriends()));
+            }
+        }
+
+        $friends = $this->createQueryBuilder()
+            ->field("id")
+            ->in($friendsOfFriends)
+            ->getQuery()
+            ->execute();
+
+        $friendsList = [];
+        /** @var User[] $friends */
+        foreach ($friends as $friend) {
+            $friendsList[] = [
                 "id" => (string) $friend->getId(),
                 "name" => $friend->getName(),
             ];
@@ -64,7 +105,7 @@ class UserRepository extends DocumentRepository
         /** @var User[] $friends */
         foreach ($friends as $friend) {
             $friendsList[] = [
-                "id" => (string) $friend->getId(),
+                "id" => (string)$friend->getId(),
                 "name" => $friend->getName(),
             ];
         }
@@ -76,7 +117,7 @@ class UserRepository extends DocumentRepository
      * If the added user exists in friendshipRequests, the user is added to the friends collection
      * and deleted from friendshipRequests. Otherwise, the user is added to the friendshipRequests.
      *
-     * @param string $apiKey   The apiKey of the user, who adds a friend
+     * @param string $apiKey The apiKey of the user, who adds a friend
      * @param string $friendId The ID of the user, that will receive the friendship request
      */
     public function addFriend($apiKey, $friendId)
@@ -86,13 +127,13 @@ class UserRepository extends DocumentRepository
         /** @var User $friend */
         $friend = $this->findOneBy(['_id' => new \MongoId($friendId)]);
 
-        if (in_array((string) $user->getId(), $friend->getFriendshipRequests())) {
-            $this->addToFriendsList($friendId, (string) $user->getId());
+        if (in_array((string)$user->getId(), $friend->getFriendshipRequests())) {
+            $this->addToFriendsList($friendId, (string)$user->getId());
         } else {
             $this->createQueryBuilder()
                 ->update()
                 ->field('_id')->equals(new \MongoId($friendId))
-                ->field('friendshipRequests')->push((string) $user->getId())
+                ->field('friendshipRequests')->push((string)$user->getId())
                 ->getQuery()
                 ->execute();
         }
@@ -111,7 +152,7 @@ class UserRepository extends DocumentRepository
             throw new FriendshipRequestDoesNotExistException();
         }
 
-        $this->addToFriendsList((string) $user->getId(), $friendId);
+        $this->addToFriendsList((string)$user->getId(), $friendId);
     }
 
     /**

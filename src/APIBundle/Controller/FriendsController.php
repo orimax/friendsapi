@@ -47,6 +47,18 @@ class FriendsController extends Controller
         return new APIResponse($friendshipRequests);
     }
 
+    public function getFriendsoffriendsAction(Request $request)
+    {
+        $apiKey = $request->headers->get('apikey');
+        $depth = (int) $request->query->get('depth');
+
+        $friends = $this->container->get('doctrine_mongodb')
+            ->getRepository('APIBundle:User')
+            ->getFriendsOfFriends($apiKey, $depth);
+
+        return new APIResponse($friends);
+    }
+
     /**
      * @param Request $request
      * @return APIResponse

@@ -44,7 +44,7 @@ class FriendsControllerTest extends WebTestCase
             ->get('doctrine_mongodb')
             ->getManager();
 
-        $this->data = json_decode(file_get_contents(__DIR__.'/data/friends.json'));
+        $this->data = json_decode(file_get_contents(__DIR__ . '/data/friends.json'));
         foreach ($this->data as $doc) {
             $user = new User();
             $user->setFriends($doc->friends)
@@ -307,6 +307,77 @@ class FriendsControllerTest extends WebTestCase
         ], $user['friendshipRequests']);
         $this->assertCount(25, $user['friends']);
         $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
+    }
+
+    public function testGetFriendsOfFriendsZeroDepth()
+    {
+        $this->client->request(
+            'GET',
+            '/friends/friendsoffriends?depth=0',
+            [],
+            [],
+            [
+                "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
+            ]
+        );
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $content = json_decode($this->client->getResponse()->getContent())->data;
+        $this->assertCount(9, $content);
+        $this->assertEquals("565c1f0c21d6c45bcf27c7f0", $content[0]->id);
+        $this->assertEquals("Eric Ambler", $content[0]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c80b", $content[1]->id);
+        $this->assertEquals("Harriet Arbuthnot", $content[1]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c815", $content[2]->id);
+        $this->assertEquals("Robert Armin", $content[2]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c817", $content[3]->id);
+        $this->assertEquals("Martin Armstrong", $content[3]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c85b", $content[4]->id);
+        $this->assertEquals("Hester Biddle", $content[4]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c864", $content[5]->id);
+        $this->assertEquals("Isabella Bird", $content[5]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c865", $content[6]->id);
+        $this->assertEquals("Dea Birkett", $content[6]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c867", $content[7]->id);
+        $this->assertEquals("Samuel Bishop", $content[7]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c869", $content[8]->id);
+        $this->assertEquals("Robert Black", $content[8]->name);
+    }
+
+    public function testGetFriendsOneDepth()
+    {
+        $this->client->request(
+            'GET',
+            '/friends/friendsoffriends?depth=1',
+            [],
+            [],
+            [
+                "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
+            ]
+        );
+        $content = json_decode($this->client->getResponse()->getContent())->data;
+        $this->assertCount(128, $content);
+        $this->assertEquals("565c1f0c21d6c45bcf27c7d3", $content[0]->id);
+        $this->assertEquals("Mary Hayley Bell", $content[0]->name);
+        $this->assertEquals("565c1f0c21d6c45bcf27c86f", $content[127]->id);
+        $this->assertEquals("Lorna Doone", $content[127]->name);
+    }
+
+    public function testGetFriendsTwoDepth()
+    {
+        $t1 = microtime(true);
+        $this->client->request(
+            'GET',
+            '/friends/friendsoffriends?depth=1000',
+            [],
+            [],
+            [
+                "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
+            ]
+        );
+        $time = microtime(true)-$t1;
+        var_dump($time);
+        $this->assertLessThan(2, $time);
     }
 
     protected function getCollection()
