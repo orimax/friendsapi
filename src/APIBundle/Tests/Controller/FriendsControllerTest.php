@@ -31,7 +31,21 @@ class FriendsControllerTest extends WebTestCase
      */
     protected $documentManager;
 
+    /**
+     * @var User[]
+     */
     protected $users = [];
+
+    protected $time;
+
+    /**
+     * FriendsControllerTest constructor.
+     */
+    public function __construct()
+    {
+        $this->data = json_decode(file_get_contents(__DIR__.'/data/friends.json'));
+        parent::__construct();
+    }
 
     /**
      * setUp() method runs before each method of the test.
@@ -44,7 +58,7 @@ class FriendsControllerTest extends WebTestCase
             ->get('doctrine_mongodb')
             ->getManager();
 
-        $this->data = json_decode(file_get_contents(__DIR__ . '/data/friends.json'));
+        $this->data = json_decode(file_get_contents(__DIR__.'/data/friends.json'));
         foreach ($this->data as $doc) {
             $user = new User();
             $user->setFriends($doc->friends)
@@ -67,56 +81,24 @@ class FriendsControllerTest extends WebTestCase
      */
     public function testGetFriends()
     {
-
+        $this->timeStart();
         $this->client->request(
             'GET',
             '/friends/list',
             [],
             [],
             [
-                "HTTP_apikey" => "ee578f3749e49042144965c65d8969d1",
+                "HTTP_apikey" => "8818762d847f2dd47c85fdcee1824cd2",
             ]
         );
-
+        $this->timeEnd('get friends');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertEquals(
-            "{\"status\":\"success\",\"data\":"
-            . "[{\"id\":\"565b9adb21d6c45bcf27aa7c\",\"name\":\"David Almond\"},"
-            . "{\"id\":\"565b9adb21d6c45bcf27aaa9\",\"name\":\"Richard Armstrong\"},"
-            . "{\"id\":\"565b9adb21d6c45bcf27aab7\",\"name\":\"Alan Bennett\"},"
-            . "{\"id\":\"565b9adb21d6c45bcf27aac5\",\"name\":\"Phyllis Bentley\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab00\",\"name\":\"Mary Hayley Bell\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab11\",\"name\":\"Walter Allen\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab19\",\"name\":\"David Almond\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab36\",\"name\":\"Roy Apps\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab5a\",\"name\":\"Peter Benson\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab5d\",\"name\":\"George Bentham\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab82\",\"name\":\"Thomas Betterton\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab85\",\"name\":\"L. S. Bevington\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ab8e\",\"name\":\"T. J. Binyon\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ac1a\",\"name\":\"Henry Digby Beste\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ac8e\",\"name\":\"Alan Bennett\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ac91\",\"name\":\"Edwin Keppel Bennett\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ac9b\",\"name\":\"Nicolas Bentley\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acac\",\"name\":\"The Book of Saint Albans\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acb7\",\"name\":\"Henry Digby Beste\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27accf\",\"name\":\"Clementina Black\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acd2\",\"name\":\"John Blackburn\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acd3\",\"name\":\"Thomas Blackburn\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acd5\",\"name\":\"R. D. Blackmore\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acd6\",\"name\":\"Lorna Doone\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acda\",\"name\":\"Alice Albinia\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acdb\",\"name\":\"Mary Alcock\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ace4\",\"name\":\"Cyril Alington\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27ace7\",\"name\":\"James Allen\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acea\",\"name\":\"Albert Campion\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27aced\",\"name\":\"Kenneth Allsop\"},"
-            . "{\"id\":\"565c111c21d6c45bcf27acf6\",\"name\":\"Elizabeth Amherst\"},"
-            . "{\"id\":\"565c112b21d6c45bcf27b0f0\",\"name\":\"G.\"},"
-            . "{\"id\":\"565c112b21d6c45bcf27b2c7\",\"name\":\"G.\"},"
-            . "{\"id\":\"565c112b21d6c45bcf27b5d8\",\"name\":\"G.\"}]}",
-            $this->client->getResponse()->getContent()
-        );
+        $content = json_decode($this->client->getResponse()->getContent())->data;
+        $this->assertCount(14, $content);
+        $this->assertEquals('565c1f0c21d6c45bcf27c7e0', $content[0]->id);
+        $this->assertEquals('Cyril Alington', $content[0]->name);
+        $this->assertEquals('565c1f0c21d6c45bcf27c83d', $content[13]->id);
+        $this->assertEquals('John Berger', $content[13]->name);
     }
 
     /**
@@ -124,7 +106,7 @@ class FriendsControllerTest extends WebTestCase
      */
     public function testGetFriendshipRequests()
     {
-
+        $this->timeStart();
         $this->client->request(
             'GET',
             '/friends/requests',
@@ -134,7 +116,7 @@ class FriendsControllerTest extends WebTestCase
                 "HTTP_apikey" => "f3b006f6cbc86cd1af64ccd1faddeda3",
             ]
         );
-
+        $this->timeEnd('get friends');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(
             "{\"status\":\"success\",\"data\":"
@@ -165,7 +147,7 @@ class FriendsControllerTest extends WebTestCase
             "565c1f0c21d6c45bcf27c827",
             "565c1f0c21d6c45bcf27c82a",
         ], $user['friendshipRequests']);
-
+        $this->timeStart();
         $this->client->request(
             'PUT',
             '/friends/addfriend',
@@ -176,7 +158,7 @@ class FriendsControllerTest extends WebTestCase
                 "HTTP_apikey" => "915ff7487e35507586c9c5fd75b9c5e6",
             ]
         );
-
+        $this->timeEnd('add friendship request');
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
         $this->assertEquals("{\"status\":\"success\",\"data\":[]}", $this->client->getResponse()->getContent());
 
@@ -204,7 +186,7 @@ class FriendsControllerTest extends WebTestCase
 
         $friend = $collection->findOne(['_id' => new \MongoId("565c1f0c21d6c45bcf27c827")]);
         $this->assertNotContains("565c1f0c21d6c45bcf27c7ee", $friend['friends']);
-
+        $this->timeStart();
         $this->client->request(
             'PUT',
             '/friends/addfriend',
@@ -215,6 +197,7 @@ class FriendsControllerTest extends WebTestCase
                 "HTTP_apikey" => "3e696adf581c3f14144b949e41afa504",
             ]
         );
+        $this->timeEnd('add friend');
 
         $userUpdated = $collection->findOne(['_id' => new \MongoId("565c1f0c21d6c45bcf27c7ee")]);
 
@@ -256,7 +239,7 @@ class FriendsControllerTest extends WebTestCase
         ], $user['friendshipRequests']);
         $this->assertCount(25, $user['friends']);
         $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
-
+        $this->timeStart();
         $this->client->request(
             'PUT',
             '/friends/request/accept',
@@ -266,6 +249,7 @@ class FriendsControllerTest extends WebTestCase
                 "HTTP_apikey" => "f3b006f6cbc86cd1af64ccd1faddeda3",
             ]
         );
+        $this->timeEnd("accept friendship");
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
         $this->assertEquals("{\"status\":\"success\",\"data\":[]}", $this->client->getResponse()->getContent());
 
@@ -290,6 +274,7 @@ class FriendsControllerTest extends WebTestCase
         ], $user['friendshipRequests']);
         $this->assertCount(25, $user['friends']);
         $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
+        $this->timeStart();
         $this->client->request(
             'DELETE',
             '/friends/request/decline',
@@ -299,6 +284,7 @@ class FriendsControllerTest extends WebTestCase
                 "HTTP_apikey" => "f3b006f6cbc86cd1af64ccd1faddeda3",
             ]
         );
+        $this->timeEnd("decline friendship");
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertEquals("{\"status\":\"success\",\"data\":[]}", $this->client->getResponse()->getContent());
         $user = $collection->findOne(['apikey' => "f3b006f6cbc86cd1af64ccd1faddeda3"]);
@@ -309,20 +295,28 @@ class FriendsControllerTest extends WebTestCase
         $this->assertNotContains("565c1f0c21d6c45bcf27c80a", $user['friends']);
     }
 
+    /**
+     * Test get friends of friends with depth=0
+     */
     public function testGetFriendsOfFriendsZeroDepth()
     {
-        $this->client->request(
-            'GET',
-            '/friends/friendsoffriends?depth=0',
-            [],
-            [],
-            [
-                "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
-            ]
-        );
-
+        $this->timeStart();
+        do {
+            $this->client->request(
+                'GET',
+                '/friends/friendsoffriends?depth=0',
+                [],
+                [],
+                [
+                    "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
+                ]
+            );
+            $data = json_decode($this->client->getResponse()->getContent(), true)['data'];
+            sleep(1);
+        } while ($data['progress'] < 100);
+        $this->timeEnd("FoF zero");
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $content = json_decode($this->client->getResponse()->getContent())->data;
+        $content = json_decode($this->client->getResponse()->getContent())->data->friends;
         $this->assertCount(9, $content);
         $this->assertEquals("565c1f0c21d6c45bcf27c7f0", $content[0]->id);
         $this->assertEquals("Eric Ambler", $content[0]->name);
@@ -344,18 +338,27 @@ class FriendsControllerTest extends WebTestCase
         $this->assertEquals("Robert Black", $content[8]->name);
     }
 
+    /**
+     * Test get friends of friends with depth=1
+     */
     public function testGetFriendsOneDepth()
     {
-        $this->client->request(
-            'GET',
-            '/friends/friendsoffriends?depth=1',
-            [],
-            [],
-            [
-                "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
-            ]
-        );
-        $content = json_decode($this->client->getResponse()->getContent())->data;
+        $this->timeStart();
+        do {
+            $this->client->request(
+                'GET',
+                '/friends/friendsoffriends?depth=1',
+                [],
+                [],
+                [
+                    "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
+                ]
+            );
+            $data = json_decode($this->client->getResponse()->getContent(), true)['data'];
+            sleep(1);
+        } while ($data['progress'] < 100);
+        $this->timeEnd('FoF one');
+        $content = json_decode($this->client->getResponse()->getContent())->data->friends;
         $this->assertCount(128, $content);
         $this->assertEquals("565c1f0c21d6c45bcf27c7d3", $content[0]->id);
         $this->assertEquals("Mary Hayley Bell", $content[0]->name);
@@ -363,29 +366,38 @@ class FriendsControllerTest extends WebTestCase
         $this->assertEquals("Lorna Doone", $content[127]->name);
     }
 
-    public function testGetFriendsTwoDepth()
+    /**
+     * Test get friends of friends with depth=1000
+     */
+    public function testGetFriendsThousandDepth()
     {
-        $t1 = microtime(true);
-        $this->client->request(
-            'GET',
-            '/friends/friendsoffriends?depth=1000',
-            [],
-            [],
-            [
-                "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
-            ]
-        );
-        $time = microtime(true)-$t1;
-        var_dump($time);
-        $this->assertLessThan(2, $time);
+        $this->timeStart();
+        do {
+
+            $this->client->request(
+                'GET',
+                '/friends/friendsoffriends?depth=1000',
+                [],
+                [],
+                [
+                    "HTTP_apikey" => "01370c75d384a033ef9d8b5ed384c04c",
+                ]
+            );
+            $data = json_decode($this->client->getResponse()->getContent(), true)['data'];
+            sleep(1);
+        } while ($data['progress'] < 100);
+        $this->timeEnd('FoF 1000');
+        $this->assertCount(157, $data['friends']);
     }
 
     protected function getCollection()
     {
         $mongo = new \MongoClient();
         $db = $mongo->selectDB("testfriends");
+        $collection = $db->selectCollection('User');
+        $collection->createIndex(['apikey' => 1], ['unique' => true]);
 
-        return $db->selectCollection('User');
+        return $collection;
     }
 
     /**
@@ -399,5 +411,16 @@ class FriendsControllerTest extends WebTestCase
         $this->documentManager->flush();
 
         parent::tearDown();
+    }
+
+    protected function timeStart()
+    {
+        $this->time = microtime(true);
+    }
+
+    protected function timeEnd($label)
+    {
+        $time = microtime(true) - $this->time;
+        var_dump($label.':'.$time);
     }
 }

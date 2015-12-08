@@ -8,6 +8,7 @@
 
 namespace APIBundle\Repository;
 
+use APIBundle\Document\FofCache;
 use APIBundle\Exception\FriendshipRequestDoesNotExistException;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use APIBundle\Document\User;
@@ -37,7 +38,7 @@ class UserRepository extends DocumentRepository
         /** @var User[] $friends */
         foreach ($friends as $friend) {
             $friendsList[] = [
-                "id" => (string)$friend->getId(),
+                "id" => (string) $friend->getId(),
                 "name" => $friend->getName(),
             ];
         }
@@ -45,45 +46,37 @@ class UserRepository extends DocumentRepository
         return $friendsList;
     }
 
-    public function getFriendsOfFriends($apiKey, $depth)
+    /**
+     * @param string $apiKey
+     * @param int    $depth
+     */
+    public function writeFriendsOfFriendsListToCache($apiKey, $depth)
     {
-        if ($depth === 0) {
-            return $this->getFriends($apiKey);
+        $cached = $this->getDocumentManager()
+            ->getRepository('APIBundle:FofCache')
+            ->findOneBy(['apikey' => $apiKey, 'depth' => $depth]);
+
+        if ($cached) {
+            return;
         }
+
+        $fofCache = $this->initializeFriendCache($apiKey, $depth);
+        /** @var FofCacheRepository $fofRepo */
+        $fofRepo =  $this->getDocumentManager()->getRepository('APIBundle:FofCache');
         $user = $this->findOneBy(["apikey" => $apiKey]);
         $friendsOfFriends = $user->getFriends();
         $found = [];
         for ($i = 0; $i < $depth; $i++) {
-            $toFind = array_diff($friendsOfFriends, $found);
-            $friends = $this->createQueryBuilder()
-                ->field("id")
-                ->in($toFind)
-                ->getQuery()
-                ->execute();
-            $found = array_unique(array_merge($found, $toFind));
-
-            /** @var User[] $friends */
-            foreach ($friends as $friend) {
-                $friendsOfFriends = array_unique(array_merge($friendsOfFriends, $friend->getFriends()));
-            }
+            $friendsOfFriends = $this->getFriendsOfNextLevel($friendsOfFriends, $found);
+            $fofRepo->updateProgress($fofCache->getId(), floor($i / $depth * 100));
         }
 
-        $friends = $this->createQueryBuilder()
-            ->field("id")
-            ->in($friendsOfFriends)
-            ->getQuery()
-            ->execute();
+        $friendsList = $this->getFullFriendsInfo($friendsOfFriends);
 
-        $friendsList = [];
-        /** @var User[] $friends */
-        foreach ($friends as $friend) {
-            $friendsList[] = [
-                "id" => (string) $friend->getId(),
-                "name" => $friend->getName(),
-            ];
-        }
+        $fofCache->setProgress(100);
+        $fofCache->setFriends($friendsList);
 
-        return $friendsList;
+        $this->dm->flush();
     }
 
     /**
@@ -105,7 +98,7 @@ class UserRepository extends DocumentRepository
         /** @var User[] $friends */
         foreach ($friends as $friend) {
             $friendsList[] = [
-                "id" => (string)$friend->getId(),
+                "id" => (string) $friend->getId(),
                 "name" => $friend->getName(),
             ];
         }
@@ -117,7 +110,7 @@ class UserRepository extends DocumentRepository
      * If the added user exists in friendshipRequests, the user is added to the friends collection
      * and deleted from friendshipRequests. Otherwise, the user is added to the friendshipRequests.
      *
-     * @param string $apiKey The apiKey of the user, who adds a friend
+     * @param string $apiKey   The apiKey of the user, who adds a friend
      * @param string $friendId The ID of the user, that will receive the friendship request
      */
     public function addFriend($apiKey, $friendId)
@@ -127,13 +120,13 @@ class UserRepository extends DocumentRepository
         /** @var User $friend */
         $friend = $this->findOneBy(['_id' => new \MongoId($friendId)]);
 
-        if (in_array((string)$user->getId(), $friend->getFriendshipRequests())) {
-            $this->addToFriendsList($friendId, (string)$user->getId());
+        if (in_array((string) $user->getId(), $friend->getFriendshipRequests())) {
+            $this->addToFriendsList($friendId, (string) $user->getId());
         } else {
             $this->createQueryBuilder()
                 ->update()
                 ->field('_id')->equals(new \MongoId($friendId))
-                ->field('friendshipRequests')->push((string)$user->getId())
+                ->field('friendshipRequests')->push((string) $user->getId())
                 ->getQuery()
                 ->execute();
         }
@@ -152,7 +145,7 @@ class UserRepository extends DocumentRepository
             throw new FriendshipRequestDoesNotExistException();
         }
 
-        $this->addToFriendsList((string)$user->getId(), $friendId);
+        $this->addToFriendsList((string) $user->getId(), $friendId);
     }
 
     /**
@@ -193,5 +186,68 @@ class UserRepository extends DocumentRepository
             ->push($friendId)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param string $apiKey
+     * @param int    $depth
+     * @return FofCache
+     */
+    protected function initializeFriendCache($apiKey, $depth)
+    {
+        $fofCache = new FofCache();
+        $fofCache->setDepth($depth);
+        $fofCache->setApikey($apiKey);
+        $this->dm->persist($fofCache);
+        $this->dm->flush();
+
+        return $fofCache;
+    }
+
+    /**
+     * @param $friendsOfFriends
+     * @param $found
+     * @return array
+     */
+    protected function getFriendsOfNextLevel($friendsOfFriends, &$found)
+    {
+        $toFind = array_diff($friendsOfFriends, $found);
+        $friends = $this->createQueryBuilder()
+            ->field("id")
+            ->in($toFind)
+            ->getQuery()
+            ->execute();
+        $found = array_unique(array_merge($found, $toFind));
+
+        /** @var User[] $friends */
+        foreach ($friends as $friend) {
+            $friendsOfFriends = array_unique(array_merge($friendsOfFriends, $friend->getFriends()));
+        }
+
+        return $friendsOfFriends;
+    }
+
+    /**
+     * @param $friendsOfFriends
+     * @return array
+     */
+    protected function getFullFriendsInfo($friendsOfFriends)
+    {
+        $friends = $this->createQueryBuilder()
+            ->field("id")
+            ->in($friendsOfFriends)
+            ->getQuery()
+            ->execute();
+
+        $friendsList = [];
+        /** @var User[] $friends */
+        foreach ($friends as $friend) {
+            $friendsList[] = [
+                "id" => (string) $friend->getId(),
+                "name" => $friend->getName(),
+            ];
+        }
+
+        return $friendsList;
     }
 }

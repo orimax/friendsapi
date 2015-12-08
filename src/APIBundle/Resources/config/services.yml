@@ -1,11 +1,14 @@
 services:
     apikey_authenticator:
-          class:  APIBundle\Security\ApiKeyAuthenticator
-          public: false
+        class:  APIBundle\Security\ApiKeyAuthenticator
+        public: false
     api_user_provider:
-          class: APIBundle\Security\APIUserProvider
-          arguments: ["@doctrine_mongodb"]
+        class: APIBundle\Security\APIUserProvider
+        arguments: ["@doctrine_mongodb"]
     kernel.listener.api_exception_listener:
-            class: APIBundle\EventListener\APIExceptionListener
-            tags:
-                - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+        class: APIBundle\EventListener\APIExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+    friends_of_friends_consumer_service:
+        class: APIBundle\Consumer\FriendsOfFriendsConsumer
+        arguments: ["@doctrine_mongodb"]

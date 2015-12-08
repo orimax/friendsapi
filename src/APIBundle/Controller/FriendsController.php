@@ -8,6 +8,7 @@
 
 namespace APIBundle\Controller;
 
+use APIBundle\Document\FofCache;
 use APIBundle\Response\APIResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,16 +48,30 @@ class FriendsController extends Controller
         return new APIResponse($friendshipRequests);
     }
 
+    /**
+     * @param Request $request
+     * @return APIResponse
+     */
     public function getFriendsoffriendsAction(Request $request)
     {
         $apiKey = $request->headers->get('apikey');
         $depth = (int) $request->query->get('depth');
 
-        $friends = $this->container->get('doctrine_mongodb')
-            ->getRepository('APIBundle:User')
+        $friendsOfFriends = $this->container->get('doctrine_mongodb')
+            ->getRepository('APIBundle:FofCache')
             ->getFriendsOfFriends($apiKey, $depth);
 
-        return new APIResponse($friends);
+        if (!$friendsOfFriends) {
+            $msg = array(
+                'apiKey' =>  $apiKey,
+                'depth' => $depth,
+            );
+            $this->get('old_sound_rabbit_mq.friends_of_friends_producer')->publish(serialize($msg));
+
+            return new APIResponse(new FofCache());
+        }
+
+        return new APIResponse($friendsOfFriends);
     }
 
     /**

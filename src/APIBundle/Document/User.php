@@ -9,7 +9,6 @@
 namespace APIBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use MongoId;
 
 /**
@@ -31,7 +30,7 @@ class User
     /**
      * @MongoDB\Collection
      */
-    protected $friends;
+    protected $friends = [];
 
     /**
      * @MongoDB\String
@@ -41,7 +40,7 @@ class User
     /**
      * @MongoDB\Collection
      */
-    protected $friendshipRequests;
+    protected $friendshipRequests = [];
 
     /**
      * Get id

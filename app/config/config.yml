@@ -84,7 +84,7 @@ doctrine_mongodb:
         default:
             server: mongodb://localhost:27017
             options: {}
-    default_database: friends
+    default_database: testfriends
     document_managers:
         default:
             auto_mapping: true
@@ -92,3 +92,31 @@ doctrine_mongodb:
 fos_rest:
     routing_loader:
         default_format: json
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host:     'localhost'
+            port:     5672
+            user:     'guest'
+            password: 'guest'
+            vhost:    '/'
+            lazy:     false
+            connection_timeout: 3
+            read_write_timeout: 3
+
+            # requires php-amqplib v2.4.1+ and PHP5.4+
+            keepalive: false
+
+            # requires php-amqplib v2.4.1+
+            heartbeat: 0
+    producers:
+        friends_of_friends:
+            connection:       default
+            exchange_options: {name: 'friends-of-friends', type: direct}
+    consumers:
+        friends_of_friends:
+            connection:       default
+            exchange_options: {name: 'friends-of-friends', type: direct}
+            queue_options:    {name: 'friends-of-friends'}
+            callback:         friends_of_friends_consumer_service
