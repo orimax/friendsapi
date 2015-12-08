@@ -2,6 +2,8 @@
 Rest API for work with friends.
 The code, certainly, can be improved, and shows only the idea of building REST API, using PHP5 and Symfony2.
 
+I will appreciate the feedback for this code, anyway.
+
 ##Installation
 
 1. Clone this project.
@@ -18,6 +20,7 @@ I tried to build this API with PHP7 and Symfony3. But, unfortunately, there is n
 3. RESTified with FoSRestBundle.
 4. RabbitMQBundle allows use Queue-Centric Workflow pattern for planning of durable operations, that cannot be calculated immediately.
 5. PHPUnit for functional tests.
+6. The code of the API wrote, following Symfony2 community standards and checked with code sniffer and mess detector.
 
 Tested with Nginx + PHP-FPM.
 Load tests run, using JMeter.
