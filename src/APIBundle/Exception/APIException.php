@@ -18,6 +18,7 @@ class APIException extends HttpException
 {
 
     protected $statusCode = 500;
+    protected $errorCode = 0;
 
     /**
      * APIException constructor.
@@ -38,6 +39,7 @@ class APIException extends HttpException
             [
                 "status" => "failure",
                 "data" => $message ?: $this->message,
+                "errorCode" => $this->errorCode,
             ]
         );
         $statusCode = $statusCode ?: $this->statusCode;

@@ -16,4 +16,5 @@ class FriendshipRequestDoesNotExistException extends APIException
 {
     protected $message = 'The specified friendship request does not exist.';
     protected $statusCode = 400;
+    protected $errorCode = 1001;
 }

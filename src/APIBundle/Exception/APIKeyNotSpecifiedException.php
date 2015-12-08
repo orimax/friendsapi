@@ -16,4 +16,5 @@ class APIKeyNotSpecifiedException extends APIException
 {
     protected $message = "You have to specify your valid API key to access the API.";
     protected $statusCode = 401;
+    protected $errorCode = 1000;
 }

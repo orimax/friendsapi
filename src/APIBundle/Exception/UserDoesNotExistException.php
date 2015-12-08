@@ -16,4 +16,5 @@ class UserDoesNotExistException extends APIException
 {
     protected $message = "The user with specified API key does not exist. Authentication denied.";
     protected $statusCode = 401;
+    protected $errorCode = 1000;
 }

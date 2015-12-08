@@ -133,6 +133,8 @@ class UserRepository extends DocumentRepository
     }
 
     /**
+     * Move user from friendshipRequests to friends.
+     *
      * @param string $apiKey
      * @param string $friendId
      * @throws FriendshipRequestDoesNotExistException
