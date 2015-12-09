@@ -11,6 +11,7 @@ I will appreciate the feedback for this code, anyway.
 3. Ensure, that mongodb is installed on your system.
 4. Ensure, that mongodb driver for PHP is installed on your system.
 5. Ensure, that rabbitmq-server is installed on your system.
+6. You need to run the worker to organize reeding messages from the the queue. The simplest way is to run command `app/console rabbitmq:consumer -m {the_number_of_messages_to_read} friends_of_friends` in the console from the root of the project.
 
 ##Used technologies
 I tried to build this API with PHP7 and Symfony3. But, unfortunately, there is no PHP driver for Mongo DB for PHP7 yet. So.
